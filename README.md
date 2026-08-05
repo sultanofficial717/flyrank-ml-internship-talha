@@ -1,160 +1,103 @@
-# FlyRank ML Internship — Starter Repo
+# FlyRank Machine Learning Internship — Portfolio & Workspace
 
-**Applied Search Intelligence: Google Search Ranking & Discoverability**
-
-This is the starting point for the FlyRank ML Internship. You **clone it into your own public
-repo** (one click — *Use this template*), build everything there, and submit that repo URL on
-each assignment in your portal — it's your workspace, your submission, and your portfolio all
-at once. The rhythm is simple: do the work, commit it, submit on the card. Done.
-
-Everything here runs on a small **anonymized** slice of real FlyRank search data. No credentials,
-no private client data, no setup headaches.
-
-> **New here?** Two reads: **[SETUP.md](SETUP.md)** (GitHub, Colab, and data access — ten
-> minutes, with every silent pitfall flagged), then **[GUIDE.md](GUIDE.md)** (every file
-> explained, what to edit vs. leave alone, and where your own work goes — five minutes).
+**Applied Search Intelligence: Google Search Ranking & Discoverability**  
+*Submitted by: Talha ([sultanofficial717](https://github.com/sultanofficial717))*
 
 ---
 
-## Quickstart — first win in 2 minutes
+## 📌 Executive Summary
 
-The fastest path is Google Colab (one click, zero install). Open Notebook 1 and run all cells:
+This repository contains my end-to-end Machine Learning work for the **FlyRank ML Internship 2026**.
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/sultanofficial717/flyrank-ml-internship-talha/blob/main/notebooks/01_first_look_and_discovery.ipynb?flush_cache=true)
- **Week 1 — Run it, then discover a real truth yourself**
+The core objective of this project is solving an essential search infrastructure problem: **out of thousands of content pages, which decaying page should a human team refresh FIRST?**
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/sultanofficial717/flyrank-ml-internship-talha/blob/main/notebooks/02_your_first_readable_model.ipynb?flush_cache=true)
- **Week 2 — The model is just a rule you can read**
-
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/sultanofficial717/flyrank-ml-internship-talha/blob/main/notebooks/03_working_with_the_full_release.ipynb?flush_cache=true)
- **Weeks 3+ — The full release (~79M rows) via DuckDB, no download needed** — hosted at
- [`FlyRank/internship-warehouse`](https://huggingface.co/datasets/FlyRank/internship-warehouse) (gated: request access + accept the data-use terms, approval is instant)
+By building, testing, and refining ML models on real anonymized Google Search Console (GSC) and Google Analytics 4 (GA4) search data (~30,000 pages), I developed a learned ranking model that outperforms hand-written heuristic rules by **> 3.9x** on `Precision@50` (improving from ~0.240 baseline precision to **0.940** with Gradient Boosting).
 
 ---
 
-## Your assignment notebooks — open, fill, save, done
+## 🎯 Completed Task Accomplishments & Key Wins
 
-Every assignment is one pre-named skeleton notebook in `work/notebooks/`. Click its badge,
-fill the sections in order, then **File → Save a copy in GitHub → OK** — the dialog is
-already pre-filled with your repo and the right path.
+### 1. Week 1 — Exploratory Data Analysis & Truth Discovery ([`01_first_look_and_discovery.ipynb`](notebooks/01_first_look_and_discovery.ipynb))
+- **Executed Full Baseline Pipeline**: Ran end-to-end features prep, baseline scoring, and model training.
+- **Data Discovery A (Search Volume vs Traffic)**: Re-evaluated search volume against impressions for active pages (`impressions_90d > 0`). Found near-zero correlation ($r \approx 0.001$), confirming that target keyword volume is a poor predictor of actual organic page traffic.
+- **Data Discovery B (CTR Cliff)**: Analyzed mean Click-Through Rate (CTR) across position tiers and content types, revealing steep CTR drop-offs past position tier 1–3 and identifying specific content types with performance gaps.
+- **Data Discovery C (Content Length Myth)**: Verified that median word counts between growing (`up`) and declining (`down`) pages are nearly identical, proving content length alone is not the primary ranking lever.
 
-> **The badges know whose repo they're in.** About 30 seconds after you create your copy, an
-> automatic commit ("Point Colab badges at this copy") rewires every badge in it to open
-> **your** notebooks — with your saved work — instead of the shared read-only ones. Reading
-> this on the shared starter page? The badges below open blank previews; make your copy
-> first ([SETUP.md](SETUP.md), Moment 1).
+### 2. Week 2 — Readable Models & Leakage Prevention ([`02_your_first_readable_model.ipynb`](notebooks/02_your_first_readable_model.ipynb))
+- **Hand-Written Baseline vs. Learned Decision Tree**: Compared a transparent 2-rule condition (`stale x visible`) against a shallow depth-2 `DecisionTreeClassifier`.
+- **Feature Leakage Prevention**: Demonstrated why outcome-derived metrics (like `trend_pct` and `trend_direction`) must **never** be used as model inputs, preventing circular training traps.
+- **Depth & Holdout Analysis**: Evaluated tree depths ($d=2, 3, 4$) and validated models on strict out-of-sample client-holdout splits (`GroupShuffleSplit` on `client_id`).
 
-| Week | Card | Notebook | Open |
-|---|---|---|---|
-| 1 | ML-02 | `w01_research_question` | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/sultanofficial717/flyrank-ml-internship-talha/blob/main/work/notebooks/w01_research_question.ipynb?flush_cache=true) |
-| 2 | ML-03 | `w02_ml_task_framing` | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/sultanofficial717/flyrank-ml-internship-talha/blob/main/work/notebooks/w02_ml_task_framing.ipynb?flush_cache=true) |
-| 3 | ML-04 | `w03_data_contract` | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/sultanofficial717/flyrank-ml-internship-talha/blob/main/work/notebooks/w03_data_contract.ipynb?flush_cache=true) |
-| 3 | ML-05 | `w03_feature_leakage_check` | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/sultanofficial717/flyrank-ml-internship-talha/blob/main/work/notebooks/w03_feature_leakage_check.ipynb?flush_cache=true) |
-| 4 | ML-06 | `w04_signal_audit` | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/sultanofficial717/flyrank-ml-internship-talha/blob/main/work/notebooks/w04_signal_audit.ipynb?flush_cache=true) |
-| 4 | ML-07 | `w04_baseline_score` | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/sultanofficial717/flyrank-ml-internship-talha/blob/main/work/notebooks/w04_baseline_score.ipynb?flush_cache=true) |
-| 5 | ML-08 | `w05_model` | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/sultanofficial717/flyrank-ml-internship-talha/blob/main/work/notebooks/w05_model.ipynb?flush_cache=true) |
-| 6 | ML-09 | `w06_validation_audit` | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/sultanofficial717/flyrank-ml-internship-talha/blob/main/work/notebooks/w06_validation_audit.ipynb?flush_cache=true) |
-| 7 | ML-10 | `w07_action_playbook` | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/sultanofficial717/flyrank-ml-internship-talha/blob/main/work/notebooks/w07_action_playbook.ipynb?flush_cache=true) |
-| 8 | ML-11 | `capstone` | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/sultanofficial717/flyrank-ml-internship-talha/blob/main/work/notebooks/capstone.ipynb?flush_cache=true) |
+### 3. Pipeline Engineering & Model Enhancements ([`scripts/`](scripts/))
+- **Feature Engineering ([`01_prepare_features.py`](scripts/01_prepare_features.py))**:
+  - Engineered log-transformed traffic signals (`log_pageviews_90d`, `log_users_90d`, `log_engaged_sessions_90d`).
+  - Added non-leaky interaction ratios: `update_age_ratio` (`days_since_last_update / (content_age_days + 1)`) and `clicks_per_session` (`clicks_90d / (sessions_90d + 1)`).
+  - Included binary indicators (`has_search_volume`, `has_word_count`, `has_clicks`, `has_ai_sessions`, `measurable_opportunity`).
+- **Model Addition & Optimization ([`03_train_model.py`](scripts/03_train_model.py))**:
+  - Integrated `gradient_boosting` (`HistGradientBoostingClassifier`) alongside Random Forest, Logistic Regression, and Decision Trees.
+  - Added $R^2$ score (`r2_score`) and permutation importance evaluation to metric payloads.
 
-Badges not opening *your* copy? Colab's built-in opener always works: **File → Open notebook
-→ GitHub tab** → paste `github.com/you/your-repo` → pick the notebook.
+---
 
-### Prefer local?
+## 📊 Comprehensive Model Performance & Evaluation
+
+All metrics are evaluated on an honest **client-holdout split** (~20% of clients held out, ensuring no page from the same client appears in both training and test sets).
+
+| Model / Baseline | Precision@50 | Precision@20 | Precision@100 | $R^2$ Score | ROC AUC | Avg Precision | Split Strategy |
+|---|---|---|---|---|---|---|---|
+| **Hand-Written Rule Baseline** | 0.240 | 0.150 | 0.360 | -0.0648 | 0.6269 | 0.4676 | Client-Holdout |
+| **Logistic Regression** | 0.480 | 0.400 | 0.540 | 0.1066 | 0.7074 | 0.5367 | Client-Holdout |
+| **Decision Tree ($d=5$)** | 0.500 | 0.450 | 0.600 | 0.1322 | 0.7347 | 0.5724 | Client-Holdout |
+| **Random Forest** | 0.840 | 0.850 | 0.810 | 0.1587 | 0.7437 | 0.6243 | Client-Holdout |
+| **Gradient Boosting (Best)** | **0.940** | **0.950** | **0.880** | **0.1758** | **0.7773** | **0.6879** | Client-Holdout |
+
+### Key Findings & Insights:
+1. **Precision@50 Lift**: Gradient Boosting achieves **0.940 Precision@50** (47 out of top 50 flagged pages are confirmed declining pages), outperforming the fixed baseline by **> 3.9x**.
+2. **Predictive Drivers**: Permutation importance identifies `days_with_impressions`, `avg_position`, `log_impressions_90d`, `content_age_days`, `scroll_rate`, `ctr`, and `update_age_ratio` as top signals.
+3. **Honest Claims**: Results are framed strictly as *observed / measured / directional decision-support* without circular leakage.
+
+---
+
+## 📁 Repository Structure & Assignment Notebooks
+
+```text
+├── notebooks/                   # Executed guided notebooks
+│   ├── 01_first_look_and_discovery.ipynb
+│   ├── 02_your_first_readable_model.ipynb
+│   └── 03_working_with_the_full_release.ipynb
+├── scripts/                     # Reference ML pipeline
+│   ├── 01_prepare_features.py   # Feature vector creation & engineering
+│   ├── 02_baseline_score.py     # Baseline rule scoring
+│   ├── 03_train_model.py        # Model training & metrics evaluation
+│   ├── 04_evaluate_and_export.py# Final ranked queue & report generation
+│   ├── 05_build_pdf_report.py   # PDF report generator
+│   └── run_all.py               # One-command pipeline execution script
+├── data/                        # Datasets (gitignored via CI guard)
+│   └── raw/content_refresh_anonymized.csv
+├── outputs/                     # Generated results, charts, and reports
+│   ├── model_report.md
+│   ├── refresh_queue.csv
+│   └── charts/
+└── work/                        # Personal workspace & capstone notebooks
+```
+
+### Quick Execution (Local)
 
 ```bash
-git clone <this-repo-url>
-cd flyrank-ml-internship-starter
-pip install -r requirements.txt          # or: uv pip install -r requirements.txt
+git clone https://github.com/sultanofficial717/flyrank-ml-internship-talha.git
+cd flyrank-ml-internship-talha
+pip install -r requirements.txt
 python scripts/run_all.py
 ```
 
-That runs the whole pipeline on the bundled sample and writes results to `outputs/`.
+---
+
+## 🔒 Data Ethics & Governance (`DATA_USE.md`)
+- All datasets are pseudonymized and anonymized.
+- Dataset files under `data/` are blocked by `.gitignore` and enforced by CI workflows.
+- No private client info or un-anonymized search queries are stored or committed.
 
 ---
 
-## What you get
-
-| Path | What it is |
-|---|---|
-| `notebooks/` | Week 1–2 **first-win notebooks** (Colab-ready). Start here. |
-| `scripts/01–05` + `run_all.py` | The runnable reference pipeline: prepare → baseline → train → evaluate → PDF. |
-| `data/raw/content_refresh_anonymized.csv` | The anonymized starter dataset (~30k pages). |
-| `outputs/` | Example outputs so you can see the **target shape** (`model_report.md`, `refresh_queue_sample.csv`, `charts/`). |
-| `work/` | **Your space.** Lane experiments and your capstone live here — see `work/README.md`. |
-| `docs/` | The core docs + the data dictionary (see below). |
-
-### Read these (in `docs/`)
-
-1. **`ml-core-foundation-framework.md`** — the first-principles map of ML as a whole system. The backbone of the live sessions.
-2. **`ml-intern-dataset-and-lane-guide.md`** — how to use the data safely, the capstone workflow, and the analysis "lanes" you can pick from.
-3. **`intern-free-tooling-guide.md`** — the zero-budget tool stack (Python, Colab, free AI assistants). You never need to pay for anything.
-4. **`data-dictionary.md`** — all 44 columns: meaning, scale, and gotchas. Keep it open while you work.
-
----
-
-## The pipeline (what `run_all.py` does)
-
-```text
-01_prepare_features.py   clean + build the feature vector, define the label
-02_baseline_score.py     a transparent hand-rule "fix this first" score
-03_train_model.py        logistic regression, decision tree, random forest (client-holdout split)
-04_evaluate_and_export.py  ranked queue + charts + Markdown report
-05_build_pdf_report.py   a shareable PDF summary
-```
-
-On the bundled sample, the learned model clearly beats the hand-written rule at picking the right
-pages to review first (**Precision@50 baseline ≈ 0.24 → Gradient Boosting 0.940** — over 3.9x lift over the baseline on client-holdout test data).
-
-### Internship Model Performance & Evaluation Summary
-
-| Model / Baseline | Precision@50 | Precision@20 | $R^2$ Score | ROC AUC | Average Precision | Split Strategy |
-|---|---|---|---|---|---|---|
-| **Hand-Written Rule Baseline** | 0.240 | 0.150 | -0.0648 | 0.6269 | 0.4676 | Client-Holdout |
-| **Logistic Regression** | 0.480 | 0.400 | 0.1066 | 0.7074 | 0.5367 | Client-Holdout |
-| **Decision Tree** | 0.500 | 0.450 | 0.1322 | 0.7347 | 0.5724 | Client-Holdout |
-| **Random Forest** | 0.840 | 0.850 | 0.1587 | 0.7437 | 0.6243 | Client-Holdout |
-| **Gradient Boosting (Best)** | **0.940** | **0.950** | **0.1758** | **0.7773** | **0.6879** | Client-Holdout |
-
-**Key Feature Engineering & Modeling Highlights:**
-- **Engineered Non-Leaky Features:** Added `log_pageviews_90d`, `log_users_90d`, `log_engaged_sessions_90d`, `update_age_ratio`, `clicks_per_session`, `has_search_volume`, and `has_word_count`.
-- **Primary Predictive Drivers:** Permutation importance identifies `days_with_impressions`, `avg_position`, `log_impressions_90d`, `content_age_days`, `scroll_rate`, `ctr`, and `update_age_ratio` as top signals.
-- **Explainability & Validation:** Evaluated strictly on a client-holdout split (no client pages shared between train and test) to ensure zero cross-client data leakage.
-
-**Teaching point:** the model is the capstone, but the *workflow* is the lesson —
-`problem framing → data cleaning → baseline → first model → evaluation → explainable recommendation`.
-
----
-
-## Data safety (read `DATA_USE.md`)
-
-- Only the small **anonymized** CSV ships here — no client names, domains, URLs, titles, or keywords.
-- **Never** add raw private client data to this repo or your fork. Need more data? Request an approved
-  release from your mentor — never export it yourself.
-- Don't paste client data into third-party AI tools.
-- Frame every result as **observed / measured / directional / decision-support** — never
-  "I predicted Google's algorithm."
-
-The `.gitignore` blocks datasets by default, and CI fails any commit that includes a dataset.
-
----
-
-## Assignments & schedule
-
-Weekly assignments, live events, and the capstone live on **your portal board** (your
-enrollment email has your access link). This repo is the shared technical foundation they all
-build on — and the `skills/` folder here is the instruction library for your AI assistant
-(start at [skills/README.md](skills/README.md)).
-
-**First time with GitHub?** You need exactly four things (full walkthrough: [SETUP.md](SETUP.md)):
-1. A free account at github.com.
-2. Your own copy of this repo: **Use this template → Create a new repository** → public.
-   (One click — brings the notebooks, `work/`, and the CI leak-guard with it.)
-3. In Colab: *File → Save a copy in GitHub* — opened from your copy's badges, the dialog is
-   already pre-filled with your repo and path, so it's just OK (Colab handles auth).
-4. That's your submission repo — share its **github.com/you/your-repo** URL with Assignment 1
-   (never a colab.research.google.com or drive.google.com link).
-
----
-
-*Track leads: Mirza Ašćerić (ML) · Hole (data engineering). Code under MIT (see `LICENSE`); data under `DATA_USE.md`.*
+*Author: Talha ([sultanofficial717](https://github.com/sultanofficial717))*  
+*FlyRank ML Internship 2026 | Code under MIT License*
