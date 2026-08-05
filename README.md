@@ -1,4 +1,4 @@
-# FlyRank Machine Learning Internship — Portfolio & Workspace
+# First Assignment — FlyRank ML Internship
 
 **Applied Search Intelligence: Google Search Ranking & Discoverability**  
 *Submitted by: Talha ([sultanofficial717](https://github.com/sultanofficial717))*
