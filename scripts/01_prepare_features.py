@@ -113,11 +113,18 @@ def main() -> None:
     df["log_clicks_90d"] = np.log1p(df["clicks_90d"])
     df["log_sessions_90d"] = np.log1p(df["sessions_90d"])
     df["log_ai_sessions_90d"] = np.log1p(df["ai_sessions_90d"])
+    df["log_pageviews_90d"] = np.log1p(df["pageviews_90d"])
+    df["log_users_90d"] = np.log1p(df["users_90d"])
+    df["log_engaged_sessions_90d"] = np.log1p(df["engaged_sessions_90d"])
     df["has_clicks"] = (df["clicks_90d"] > 0).astype(int)
     df["has_ai_sessions"] = (df["ai_sessions_90d"] > 0).astype(int)
     df["measurable_opportunity"] = (
         (df["impressions_90d"] >= 100) & (df["sessions_90d"] > 0)
     ).astype(int)
+    df["update_age_ratio"] = df["days_since_last_update"] / (df["content_age_days"] + 1.0)
+    df["clicks_per_session"] = df["clicks_90d"] / (df["sessions_90d"] + 1.0)
+    df["has_search_volume"] = (df["search_volume"] > 0).astype(int)
+    df["has_word_count"] = (df["word_count"] > 0).astype(int)
 
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)

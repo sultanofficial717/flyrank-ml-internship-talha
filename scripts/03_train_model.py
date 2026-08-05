@@ -5,13 +5,14 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import HistGradientBoostingClassifier, RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
     accuracy_score,
     average_precision_score,
     f1_score,
     precision_score,
+    r2_score,
     recall_score,
     roc_auc_score,
 )
@@ -130,10 +131,15 @@ def build_models() -> dict[str, object]:
         ),
         "random_forest": RandomForestClassifier(
             class_weight="balanced_subsample",
-            max_depth=10,
-            min_samples_leaf=25,
-            n_estimators=200,
+            max_depth=12,
+            min_samples_leaf=15,
+            n_estimators=300,
             n_jobs=-1,
+            random_state=RANDOM_STATE,
+        ),
+        "gradient_boosting": HistGradientBoostingClassifier(
+            max_iter=200,
+            max_depth=6,
             random_state=RANDOM_STATE,
         ),
     }
@@ -162,6 +168,7 @@ def metric_payload(
             recall_score(target_series, binary_predictions, zero_division=0)
         ),
         f"{prefix}f1": float(f1_score(target_series, binary_predictions, zero_division=0)),
+        f"{prefix}r2_score": float(r2_score(target_series, probability_scores)),
         f"{prefix}precision_at_20": precision_at_k(target_series, probability_scores, 20),
         f"{prefix}precision_at_50": precision_at_k(target_series, probability_scores, 50),
         f"{prefix}precision_at_100": precision_at_k(target_series, probability_scores, 100),
@@ -181,13 +188,22 @@ def top_feature_importance(
     model: object,
     feature_columns: list[str],
     *,
+    X_val: pd.DataFrame | None = None,
+    y_val: pd.Series | None = None,
     limit: int = 25,
 ) -> list[dict[str, float | str]]:
     if isinstance(model, Pipeline):
         classifier = model.named_steps["model"]
         raw_values = np.abs(classifier.coef_[0])
-    elif hasattr(model, "feature_importances_"):
+    elif hasattr(model, "feature_importances_") and model.feature_importances_ is not None:
         raw_values = np.asarray(model.feature_importances_, dtype=float)
+    elif X_val is not None and y_val is not None:
+        from sklearn.inspection import permutation_importance
+
+        res = permutation_importance(
+            model, X_val, y_val, n_repeats=3, random_state=RANDOM_STATE, n_jobs=-1
+        )
+        raw_values = np.maximum(0, res.importances_mean)
     else:
         raw_values = np.zeros(len(feature_columns), dtype=float)
 
@@ -284,7 +300,9 @@ def main() -> None:
         "best_model": {
             "name": best_model_name,
             "selection_metric": "precision_at_50",
-            "feature_importance_top": top_feature_importance(best_full_model, feature_columns),
+            "feature_importance_top": top_feature_importance(
+                best_full_model, feature_columns, X_val=feature_frame, y_val=target_series
+            ),
         },
         "prediction_output": display_path(prediction_path),
     }
