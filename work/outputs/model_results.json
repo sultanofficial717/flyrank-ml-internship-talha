@@ -1,0 +1,22 @@
+{
+  "assignment": "ML-08 (Week 05)",
+  "lane": "Lane 2 - Refresh / Opportunity Scoring",
+  "primary_metric": "Precision@50",
+  "holdout_test_items": 24575,
+  "holdout_base_rate": 0.38929806714140386,
+  "baseline_precision_at_50": 0.36,
+  "random_forest_precision_at_50": 0.56,
+  "absolute_lift_p50": 0.20000000000000007,
+  "logistic_regression_precision_at_50": 0.54,
+  "gradient_boosting_precision_at_50": 0.44,
+  "model_winner": "Random Forest Classifier",
+  "feature_columns": [
+    "log_impressions_early",
+    "log_clicks_early",
+    "avg_position_early",
+    "active_days_early",
+    "log_sessions_early",
+    "ctr_early",
+    "has_ga4_sessions"
+  ]
+}
