@@ -1,0 +1,33 @@
+{
+  "assignment": "ML-10 (Week 07 Build+)",
+  "lane": "Lane 2 - Refresh / Opportunity Scoring",
+  "total_ranked_queue_items": 102537,
+  "unique_clients_count": 40,
+  "action_distribution": {
+    "SCHEDULE_EDITORIAL_REVIEW": 32425,
+    "MAINTAIN_CURRENT_SCHEDULE": 19469,
+    "ROUTINE_QUARTERLY_REFRESH": 19087,
+    "AUDIT_TITLE_METADATA": 15519,
+    "REVIEW_SERP_SNIPPET": 8639,
+    "PROTECT_EXISTING_RANK": 4312,
+    "EXPAND_AND_OPTIMIZE": 1396,
+    "MONITOR_IMPRESSION_CONSISTENCY": 1058,
+    "DEFENSIVE_CONTENT_UPDATE": 619,
+    "PRIORITIZE_CONTENT_REFRESH": 13
+  },
+  "archetype_distribution": {
+    "Standard Core Asset": 63655,
+    "Page-1 Striking CTR Gap": 24230,
+    "Evergreen Trophy Asset": 7128,
+    "Striking Distance Contender": 5126,
+    "Sporadic Long-Tail Asset": 1643,
+    "Decaying High-Volume Pioneer": 755
+  },
+  "holdout_precision_at_50": 0.62,
+  "baseline_precision_at_50": 0.36,
+  "figures_generated": [
+    "work/figures/action_distribution.png",
+    "work/figures/archetype_decay_risk.png",
+    "work/figures/precision_at_k_curve.png"
+  ]
+}
