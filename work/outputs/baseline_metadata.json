@@ -1,0 +1,16 @@
+{
+  "assignment": "ML-07 (Week 04)",
+  "lane": "Lane 2 - Refresh / Opportunity Scoring",
+  "total_ranked_items": 102537,
+  "base_rate_decline": 0.32389283868262186,
+  "precision_at_50": 0.38,
+  "precision_at_100": 0.32,
+  "top_baseline_score": 90.31775066561339,
+  "median_baseline_score": 41.1243509833411,
+  "formula_weights": {
+    "visibility_score": 0.4,
+    "position_opp_score": 0.3,
+    "ctr_gap_score": 0.2,
+    "activity_gap_score": 0.1
+  }
+}
