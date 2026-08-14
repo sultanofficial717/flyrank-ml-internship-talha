@@ -1,0 +1,13 @@
+{
+  "assignment": "ML-09 (Week 06 Build+)",
+  "lane": "Lane 2 - Refresh / Opportunity Scoring",
+  "primary_metric": "Precision@50",
+  "naive_random_split_precision_at_50": 0.72,
+  "honest_grouped_split_precision_at_50": 0.54,
+  "client_overlap_random_split": "100%",
+  "client_overlap_grouped_split": "0% (Zero cross-client contamination)",
+  "holdout_clients_count": 8,
+  "holdout_items_count": 24575,
+  "leakage_audit_status": "PASSED (Zero target or future-window leakage)",
+  "safe_claim_language_verified": true
+}
