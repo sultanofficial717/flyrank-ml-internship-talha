@@ -1,103 +1,141 @@
-# First Assignment — FlyRank ML Internship
+# Applied Search Intelligence: Content Opportunity Scoring & Decay Prioritization
 
-**Applied Search Intelligence: Google Search Ranking & Discoverability**  
-*Submitted by: Talha ([sultanofficial717](https://github.com/sultanofficial717))*
+[![GitHub Pages Deployment](https://img.shields.io/badge/Research%20Paper-Live%20on%20GitHub%20Pages-blue?style=for-the-badge&logo=github)](https://sultanofficial717.github.io/flyrank-ml-internship-talha/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](LICENSE)
+[![Python 3.11+](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![DuckDB](https://img.shields.io/badge/DuckDB-In--Process%20SQL-FFF000?style=for-the-badge&logo=duckdb&logoColor=black)](https://duckdb.org/)
+[![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-Machine%20Learning-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
 
----
-
-## 📌 Executive Summary
-
-This repository contains my end-to-end Machine Learning work for the **FlyRank ML Internship 2026**.
-
-The core objective of this project is solving an essential search infrastructure problem: **out of thousands of content pages, which decaying page should a human team refresh FIRST?**
-
-By building, testing, and refining ML models on real anonymized Google Search Console (GSC) and Google Analytics 4 (GA4) search data (~30,000 pages), I developed a learned ranking model that outperforms hand-written heuristic rules by **> 3.9x** on `Precision@50` (improving from ~0.240 baseline precision to **0.940** with Gradient Boosting).
-
----
-
-## 🎯 Completed Task Accomplishments & Key Wins
-
-### 1. Week 1 — Exploratory Data Analysis & Truth Discovery ([`01_first_look_and_discovery.ipynb`](notebooks/01_first_look_and_discovery.ipynb))
-- **Executed Full Baseline Pipeline**: Ran end-to-end features prep, baseline scoring, and model training.
-- **Data Discovery A (Search Volume vs Traffic)**: Re-evaluated search volume against impressions for active pages (`impressions_90d > 0`). Found near-zero correlation ($r \approx 0.001$), confirming that target keyword volume is a poor predictor of actual organic page traffic.
-- **Data Discovery B (CTR Cliff)**: Analyzed mean Click-Through Rate (CTR) across position tiers and content types, revealing steep CTR drop-offs past position tier 1–3 and identifying specific content types with performance gaps.
-- **Data Discovery C (Content Length Myth)**: Verified that median word counts between growing (`up`) and declining (`down`) pages are nearly identical, proving content length alone is not the primary ranking lever.
-
-### 2. Week 2 — Readable Models & Leakage Prevention ([`02_your_first_readable_model.ipynb`](notebooks/02_your_first_readable_model.ipynb))
-- **Hand-Written Baseline vs. Learned Decision Tree**: Compared a transparent 2-rule condition (`stale x visible`) against a shallow depth-2 `DecisionTreeClassifier`.
-- **Feature Leakage Prevention**: Demonstrated why outcome-derived metrics (like `trend_pct` and `trend_direction`) must **never** be used as model inputs, preventing circular training traps.
-- **Depth & Holdout Analysis**: Evaluated tree depths ($d=2, 3, 4$) and validated models on strict out-of-sample client-holdout splits (`GroupShuffleSplit` on `client_id`).
-
-### 3. Pipeline Engineering & Model Enhancements ([`scripts/`](scripts/))
-- **Feature Engineering ([`01_prepare_features.py`](scripts/01_prepare_features.py))**:
-  - Engineered log-transformed traffic signals (`log_pageviews_90d`, `log_users_90d`, `log_engaged_sessions_90d`).
-  - Added non-leaky interaction ratios: `update_age_ratio` (`days_since_last_update / (content_age_days + 1)`) and `clicks_per_session` (`clicks_90d / (sessions_90d + 1)`).
-  - Included binary indicators (`has_search_volume`, `has_word_count`, `has_clicks`, `has_ai_sessions`, `measurable_opportunity`).
-- **Model Addition & Optimization ([`03_train_model.py`](scripts/03_train_model.py))**:
-  - Integrated `gradient_boosting` (`HistGradientBoostingClassifier`) alongside Random Forest, Logistic Regression, and Decision Trees.
-  - Added $R^2$ score (`r2_score`) and permutation importance evaluation to metric payloads.
+**Author:** Talha ([@sultanofficial717](https://github.com/sultanofficial717))  
+**Role:** Applied Machine Learning Intern, Search Intelligence Track  
+**Program:** FlyRank Applied ML Internship (2026)  
+**Live Published Research Paper:** [https://sultanofficial717.github.io/flyrank-ml-internship-talha/](https://sultanofficial717.github.io/flyrank-ml-internship-talha/)  
+**Dataset Credit:** [FlyRank AI](https://flyrank.ai)
 
 ---
 
-## 📊 Comprehensive Model Performance & Evaluation
+## 📌 Executive Summary & My Research Journey
 
-All metrics are evaluated on an honest **client-holdout split** (~20% of clients held out, ensuring no page from the same client appears in both training and test sets).
+During my Applied Machine Learning Internship at **FlyRank**, I investigated a fundamental bottleneck in enterprise search infrastructure: **out of tens of thousands of published articles in an enterprise portfolio, which decaying page should an editorial team refresh FIRST?**
 
-| Model / Baseline | Precision@50 | Precision@20 | Precision@100 | $R^2$ Score | ROC AUC | Avg Precision | Split Strategy |
-|---|---|---|---|---|---|---|---|
-| **Hand-Written Rule Baseline** | 0.240 | 0.150 | 0.360 | -0.0648 | 0.6269 | 0.4676 | Client-Holdout |
-| **Logistic Regression** | 0.480 | 0.400 | 0.540 | 0.1066 | 0.7074 | 0.5367 | Client-Holdout |
-| **Decision Tree ($d=5$)** | 0.500 | 0.450 | 0.600 | 0.1322 | 0.7347 | 0.5724 | Client-Holdout |
-| **Random Forest** | 0.840 | 0.850 | 0.810 | 0.1587 | 0.7437 | 0.6243 | Client-Holdout |
-| **Gradient Boosting (Best)** | **0.940** | **0.950** | **0.880** | **0.1758** | **0.7773** | **0.6879** | Client-Holdout |
+Enterprise content marketing organizations manage vast URL inventories spanning 10,000 to over 500,000 pages. However, human editorial capacity is fundamentally scarce—editorial teams can typically only audit, rewrite, or update 50 to 100 articles per monthly publishing cycle. When teams rely on static calendar rules (e.g., *"refresh every 6 months"*) or sort solely by raw historical traffic volume, they waste editorial resources on stable evergreen URLs while rapidly declining commercial assets are neglected.
 
-### Key Findings & Insights:
-1. **Precision@50 Lift**: Gradient Boosting achieves **0.940 Precision@50** (47 out of top 50 flagged pages are confirmed declining pages), outperforming the fixed baseline by **> 3.9x**.
-2. **Predictive Drivers**: Permutation importance identifies `days_with_impressions`, `avg_position`, `log_impressions_90d`, `content_age_days`, `scroll_rate`, `ctr`, and `update_age_ratio` as top signals.
-3. **Honest Claims**: Results are framed strictly as *observed / measured / directional decision-support* without circular leakage.
+To solve this, I chose **Lane 2: Refresh / Content Opportunity Scoring**. Working on the ~78.8M-row multi-tenant FlyRank Enterprise Warehouse dataset across 104 brand accounts, I formulated content opportunity scoring as an out-of-domain binary classification and ranking problem.
+
+By engineering strictly pre-decision search signals and evaluating models under a rigorous **Client-Holdout Grouped Validation Split** on 8 completely unseen client domains (24,575 content items), my **Random Forest** model achieved a validated **Precision@50 of 0.560**—delivering a **+20.0 percentage point absolute lift (+55.6% relative efficiency gain)** over the heuristic baseline (0.360). I then translated these empirical models into an operational **Content Action Playbook** equipped with interpretable reason codes, human-in-the-loop governance gates, and a strict "DO NOT AUTOMATE" policy.
 
 ---
 
-## 📁 Repository Structure & Assignment Notebooks
+## 🛠️ My Technical Stack & Infrastructure
 
-```text
-├── notebooks/                   # Executed guided notebooks
-│   ├── 01_first_look_and_discovery.ipynb
-│   ├── 02_your_first_readable_model.ipynb
-│   └── 03_working_with_the_full_release.ipynb
-├── scripts/                     # Reference ML pipeline
-│   ├── 01_prepare_features.py   # Feature vector creation & engineering
-│   ├── 02_baseline_score.py     # Baseline rule scoring
-│   ├── 03_train_model.py        # Model training & metrics evaluation
-│   ├── 04_evaluate_and_export.py# Final ranked queue & report generation
-│   ├── 05_build_pdf_report.py   # PDF report generator
-│   └── run_all.py               # One-command pipeline execution script
-├── data/                        # Datasets (gitignored via CI guard)
-│   └── raw/content_refresh_anonymized.csv
-├── outputs/                     # Generated results, charts, and reports
-│   ├── model_report.md
-│   ├── refresh_queue.csv
-│   └── charts/
-└── work/                        # Personal workspace & capstone notebooks
+I built this end-to-end research pipeline using modern, high-performance data science and machine learning tooling:
+
+```
+┌────────────────────────────────────────────────────────────────────────────┐
+│                              MY TECH STACK                                 │
+├──────────────────────┬─────────────────────────────────────────────────────┤
+│ Storage & Warehouse  │ Hugging Face Hub (FlyRank/internship-warehouse)    │
+│ Analytics SQL Engine │ DuckDB (Direct In-Memory Parquet Querying)         │
+│ Data Engineering     │ Python 3.11+, Pandas, NumPy, PyArrow               │
+│ Machine Learning     │ Scikit-Learn (Random Forest, GBDT, Logistic Reg)    │
+│ Model Validation     │ GroupShuffleSplit (Client-Holdout), Precision@K    │
+│ Research Figures     │ Matplotlib, Seaborn                                 │
+│ Notebook Environment │ Jupyter Notebooks, nbformat, nbclient, Google Colab│
+│ Web Publishing / UX  │ Semantic HTML5, Vanilla CSS Design System, GH Pages│
+│ Version & Leak Guard │ Git, GitHub Actions, CI Leak-Guard Isolation        │
+└──────────────────────┴─────────────────────────────────────────────────────┘
 ```
 
-### Quick Execution (Local)
-
-```bash
-git clone https://github.com/sultanofficial717/flyrank-ml-internship-talha.git
-cd flyrank-ml-internship-talha
-pip install -r requirements.txt
-python scripts/run_all.py
-```
+### Key Engineering Highlights:
+- **Zero-Copy Remote Parquet Analytics:** Used **DuckDB** to directly stream and aggregate millions of rows of remote Parquet files partitioned by month (`fact_content_daily_performance/month=2026-03/*.parquet`) via Hugging Face secrets, avoiding expensive local data dumps.
+- **Strict Temporal & Feature Isolation:** Enforced mathematical separation between the pre-decision feature window (Days 1–20 of March) and the post-decision outcome window (Days 21–31 of March), guaranteeing zero target leakage.
+- **Client-Grouped Cross-Validation:** Utilized `GroupShuffleSplit` across client domain hashes (`client_hash_id`) to ensure models were audited for genuine out-of-domain generalization rather than memorizing brand identities.
 
 ---
 
-## 🔒 Data Ethics & Governance (`DATA_USE.md`)
-- All datasets are pseudonymized and anonymized.
-- Dataset files under `data/` are blocked by `.gitignore` and enforced by CI workflows.
-- No private client info or un-anonymized search queries are stored or committed.
+## 💡 Key Empirical Findings & Observations
+
+### 1. The Non-Linearity of Search Decay
+I observed that raw calendar age alone is a weak predictor of decay velocity. Instead, tree feature attribution revealed that **impression logging consistency (`active_days_early`, 29.4% importance)**, **ranking position tiers (`avg_position_early`, 16.8%)**, and **click-through capture gaps (`ctr_early`, 16.6%)** are the primary drivers of traffic vulnerability.
+
+### 2. The Naive Split Illusion (Validation Audit)
+When I initially tested models using a standard random row split, Precision@50 appeared to be **~0.780**. However, audit analysis revealed that 100% of test clients were present in the training set, allowing trees to memorize client-specific URL patterns and domain authority. Under my honest **Client-Holdout Grouped Split** (0% client overlap), Random Forest achieved an honest **Precision@50 of 0.560** (and Precision@20 of 0.600). This gap demonstrated that client domain memorization inflates naive metrics, and proved that the model retains robust predictive power on unseen brand accounts.
+
+### 3. Zero-Click SERP Confounding
+In conducting error analyses of the top-50 false positives, I observed that **46% of false alarms** were top-ranking informational pages (`avg_position_early` < 2.0) with near-zero CTR. These queries trigger Google AI Overviews or Knowledge Graph answer boxes where zero-click search behavior is natural and impression traffic remains resilient. This insight directly shaped my human-review protocols.
+
+### 4. The Content Action Playbook & Human Governance
+I mapped verified content archetypes into six operational workflows. To prevent unmonitored automation risks, I established a strict **"DO NOT AUTOMATE" (NO-GO)** policy: algorithms handle data ingestion, decay scoring, and queue sorting; human editors retain exclusive authority over content rewriting, URL publishing, and 301 redirects.
 
 ---
 
-*Author: Talha ([sultanofficial717](https://github.com/sultanofficial717))*  
-*FlyRank ML Internship 2026 | Code under MIT License*
+## 📊 Comprehensive Model Performance (Honest Client-Holdout)
+
+All models were evaluated on the **exact same 24,575-row holdout evaluation partition** across 8 completely unseen client brand domains (38.93% base decay rate):
+
+| Model / Architecture | Precision@20 | Precision@50 (Primary) | Precision@100 | ROC-AUC | Avg Precision | Status / Finding |
+|---|---|---|---|---|---|---|
+| **Random Guess (Holdout Base Rate)** | 0.389 | 0.389 | 0.389 | 0.500 | 0.389 | Empirical baseline floor |
+| **Week-4 Heuristic Baseline** | 0.400 | 0.360 | 0.300 | 0.428 | 0.337 | Heuristic rule (64% false alarms) |
+| **Logistic Regression (Linear ML)** | 0.500 | 0.540 | 0.530 | 0.640 | 0.488 | Linear baseline (+18.0% lift) |
+| **Random Forest (Tree Ensemble)** | **0.600** | **0.560** | **0.550** | **0.641** | **0.494** | **WINNER (+20.0% absolute lift)** |
+| **Gradient Boosted Trees (HistGBDT)** | 0.350 | 0.440 | 0.360 | 0.642 | 0.495 | Strong tail ranking |
+
+<p align="center">
+  <img src="docs/img/precision_at_k_curve.png" alt="Precision at K Curve" width="85%">
+</p>
+
+---
+
+## 📑 Chronological Map of Completed Work
+
+Every assignment in this repository has been executed, audited, and verified:
+
+| Milestone | Assignment | Notebook / Deliverable | Status | Open in Colab |
+|---|---|---|---|---|
+| **Week 01** | **ML-02** | Research Question & Truth Discovery | Complete | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/sultanofficial717/flyrank-ml-internship-talha/blob/main/work/notebooks/w01_research_question.ipynb?flush_cache=true) |
+| **Week 02** | **ML-03** | ML Task Framing & Unit of Analysis | Complete | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/sultanofficial717/flyrank-ml-internship-talha/blob/main/work/notebooks/w02_ml_task_framing.ipynb?flush_cache=true) |
+| **Week 03** | **ML-04** | Data Contract, Features & Leakage Audit | Complete | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/sultanofficial717/flyrank-ml-internship-talha/blob/main/work/notebooks/w03_data_contract.ipynb?flush_cache=true) |
+| **Week 04** | **ML-07** | Baseline Action Score Formulation | Complete | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/sultanofficial717/flyrank-ml-internship-talha/blob/main/work/notebooks/w04_baseline_score.ipynb?flush_cache=true) |
+| **Week 05** | **ML-08** | Model Training & Baseline Comparison | Complete | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/sultanofficial717/flyrank-ml-internship-talha/blob/main/work/notebooks/w05_model.ipynb?flush_cache=true) |
+| **Week 06** | **ML-09** | Validation Audit & Research Claim Audit | Complete | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/sultanofficial717/flyrank-ml-internship-talha/blob/main/work/notebooks/w06_validation_audit.ipynb?flush_cache=true) |
+| **Week 07** | **ML-10** | Content Action Playbook & Governance | Complete | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/sultanofficial717/flyrank-ml-internship-talha/blob/main/work/notebooks/w07_action_playbook.ipynb?flush_cache=true) |
+| **Capstone**| **ML-11** | Research Paper & Public Web Deployment | Complete | [![Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/sultanofficial717/flyrank-ml-internship-talha/blob/main/work/notebooks/capstone.ipynb?flush_cache=true) |
+| **Executive**| **ML-12** | 5-Min Demo Outline + Employer Summary | Complete | *(Integrated in Capstone closing cells)* |
+
+---
+
+## 🏛️ Content Action Playbook & Archetype Matrix
+
+I structured the operational queue into six evidence-backed content archetypes:
+
+| Content Archetype | Verified Evidence Profile | Recommended Action | Reason Code | Editorial Review Protocol |
+|---|---|---|---|---|
+| **Evergreen Trophy Asset** | Imp $\ge 2,500$, Avg Pos $\le 5.0$ | `DEFENSIVE_CONTENT_UPDATE` | `TOP_RANK_DECAY_PREV` | Repair broken citations; update statistics; protect page-1 rank without altering URL structure. |
+| **Page-1 Striking CTR Gap** | Imp $\ge 500$, Avg Pos $4\text{--}20$, CTR $< 1.0\%$ | `REVIEW_SERP_SNIPPET` | `HIGH_EXPOSURE_CTR_GAP` | Audit SERP layout for AI Overviews; test clearer title tags and meta descriptions. |
+| **Decaying High-Volume Pioneer** | Imp $\ge 500$, Active Days $\le 10/20$ | `PRIORITIZE_CONTENT_REFRESH` | `PERSISTENT_EROSION` | Full editorial overhaul; expand thin sections; replace outdated examples. |
+| **Striking Distance Contender** | Imp $\ge 1,000$, Avg Pos $\le 20.0$ | `EXPAND_AND_OPTIMIZE` | `HIGH_DEMAND_STRIKING` | Deepen topical authority; add FAQ schema; target secondary semantic keywords. |
+| **Moderate Opportunity Asset** | Imp $250\text{--}1,000$, CTR $< 0.5\%$ | `AUDIT_TITLE_METADATA` | `MODERATE_CTR_OPP` | Lightweight metadata review during regular publishing sprints. |
+| **Stable Core Asset** | Consistent traffic, Decay $P < 0.40$ | `MAINTAIN_CURRENT_SCHEDULE` | `STABLE_PROFILE` | Retain existing publishing schedule; monitor in monthly tracking queues. |
+
+<p align="center">
+  <img src="docs/img/action_distribution.png" alt="Action Distribution" width="48%">
+  <img src="docs/img/archetype_decay_risk.png" alt="Archetype Decay Risk" width="48%">
+</p>
+
+---
+
+## 🔒 Data Ethics & Public Safety Standards
+
+- **Zero Client Exposure:** All client identifiers (`client_hash_id`) and content identifiers (`content_hash_id`) are cryptographic pseudonyms. No customer names, internal URLs, or raw search queries appear anywhere in this repository or in the deployed research paper.
+- **CI Leak-Guard Enforcement:** Large raw datasets and generated queue CSV files (`work/outputs/*.csv`) are intentionally excluded by `.gitignore` and guarded by repository CI checks.
+- **Honest Language:** All conclusions use cautious scientific framing (*observed, measured, directional, decision-support*), strictly avoiding unsupported causal claims.
+
+---
+
+## 📖 Acknowledgments & Citations
+
+- **Data Source:** Built on the [FlyRank ML Internship Dataset](https://flyrank.ai).
+- **Research Reference:** *The State of AI-Driven SEO in Numbers* (FlyRank Research, March 2026).
+- **Author:** Talha ([@sultanofficial717](https://github.com/sultanofficial717))  
+- **License:** Open-sourced under the MIT License.
