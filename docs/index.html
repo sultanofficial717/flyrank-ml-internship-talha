@@ -388,25 +388,33 @@
     <div class="abstract-box">
       <h2>Abstract</h2>
       <p>
-        How can enterprise content marketing teams prioritize high-value editorial refreshes across tens of thousands of published articles before organic search decay severely reduces traffic? Using an anonymized multi-client dataset of 102,537 active search records across 40 brand accounts from the ~79M-row FlyRank warehouse release, we formulated content opportunity scoring as an out-of-domain binary classification and ranking problem. We evaluated linear and non-linear decision-tree classifiers under a strict Client-Holdout Grouped Validation design (80% train clients, 20% unseen test clients) to prevent cross-client domain memorization. The validated Random Forest model achieved an out-of-sample Precision@50 of 0.560 (a +20.0 percentage point absolute lift over the 0.360 heuristic baseline), demonstrating that historical impression consistency and position-tier click gaps reliably identify decay vulnerability without post-decision label leakage. These findings translate into a human-governed Content Action Playbook that prioritizes editorial review queues, enforces strict 'Do-Not-Automate' guardrails, and provides transparent reason codes for content operations.
+        Enterprise content marketing organizations managing vast inventories of 10,000 to over 500,000 published articles face severe capacity constraints and struggle to determine which decaying pages require immediate editorial refresh intervention. To solve this FlyRank search intelligence challenge, we investigated whether pre-decision search engine visibility metrics and click-through dynamics can reliably prioritize high-value content assets before traffic decay occurs. Using an anonymized multi-client dataset of 102,537 active search records across 40 brand accounts from the ~79M-row FlyRank warehouse release, we extracted seven strictly pre-decision search signals and defined decay as a >20% drop in post-decision daily impression capture. Evaluated under a strict Client-Holdout Grouped Validation design (80% train clients, 20% unseen test clients), Random Forest achieved an out-of-sample Precision@50 of 0.560 (a +20.0 percentage point absolute lift over the 0.360 heuristic baseline), demonstrating that historical impression consistency and position-tier click gaps reliably predict decay vulnerability without label leakage. These empirical findings translate into a human-governed Content Action Playbook that prioritizes editorial review queues, enforces strict 'Do-Not-Automate' guardrails, and provides transparent diagnostic reason codes for content operations.
       </p>
     </div>
 
     <!-- SECTION 2: INTRODUCTION / PROBLEM -->
-    <section>
-      <h2 class="section-heading">1. Introduction & Problem Statement</h2>
+        <section>
+      <h2 class="section-heading">1. Introduction & Case-Study Problem Statement</h2>
       <p>
-        Enterprise content marketing organizations manage vast URL inventories spanning 10,000 to over 500,000 published pages. While content decay—the gradual or sudden loss of search engine impressions and ranking visibility—is a universal operational reality, editorial capacity is fundamentally scarce. Typical content teams can only inspect, rewrite, or refresh 50 to 100 articles during a standard monthly publishing cycle.
+        Enterprise content marketing organizations manage expansive URL inventories spanning 10,000 to over 500,000 published pages. While organic search decay—the gradual or sudden erosion of keyword rankings, search impressions, and organic traffic—is an unavoidable lifecycle phenomenon across enterprise websites, human editorial capacity is fundamentally scarce. A typical enterprise content team can only thoroughly audit, rewrite, or update 50 to 100 articles during a standard monthly publishing cycle.
       </p>
       <p>
-        In practice, editorial teams rely on naive heuristic rules: refreshing articles on arbitrary calendar cadences (e.g., "update every 6 months") or sorting inventories by raw historical traffic. These fixed rules suffer from two critical failure modes:
+        In practice, content teams face the critical operational question: <strong>Which content should an editor investigate or refresh first?</strong> Today, organizations overwhelmingly rely on naive heuristic rules: refreshing articles on arbitrary calendar cadences (e.g., <em>"update every 6 months"</em>) or sorting inventories by raw historical traffic volume. These fixed rules suffer from two critical operational failure modes:
       </p>
       <ul>
-        <li><strong>Calendar Blindness:</strong> Evergreen articles in top-ranking positions are unnecessarily edited, risking stable domain authority, while rapidly declining assets are neglected.</li>
-        <li><strong>Zero-Click SERP Confounding:</strong> High-impression queries triggering Google AI Overviews or direct answer snippets exhibit naturally low click-through rates (CTR) but remain stable, creating massive false-alarm volume in editorial queues.</li>
+        <li><strong>Calendar Blindness:</strong> Evergreen articles occupying stable top-3 ranking positions are unnecessarily edited—risking domain authority and search visibility—while rapidly decaying commercial assets in competitive tiers are neglected.</li>
+        <li><strong>Zero-Click SERP Confounding:</strong> High-impression queries triggering Google AI Overviews or direct answer panels exhibit naturally low click-through rates (CTR) but remain highly resilient, flooding editorial queues with false alarms.</li>
       </ul>
       <p>
-        <strong>Research Question:</strong> <em>Can pre-decision search engine visibility metrics and click-through dynamics reliably identify enterprise content assets approaching organic traffic decay, enabling editors to prioritize high-leverage content refreshes before traffic loss occurs?</em>
+        This research case study directly addresses the <strong>FlyRank Lane 2 (Refresh / Content Opportunity Scoring)</strong> challenge. Rather than building an autonomous publishing tool or claiming to predict search engine ranking algorithms, we formulate a decision-support system that identifies content assets exhibiting statistical vulnerability to decay prior to performance collapse.
+      </p>
+      <p>
+        <strong>Core Research Question:</strong> <em>Can pre-decision search engine visibility metrics and click-through dynamics reliably identify enterprise content assets approaching organic traffic decay, enabling editors to prioritize high-leverage content refreshes before traffic loss occurs?</em>
+      </p>
+      <p>
+        The end-to-end workflow establishes a direct bridge from warehouse telemetry to editorial action:
+        <br>
+        <code>FlyRank Content Problem</code> &rarr; <code>Editorial Prioritization Decision</code> &rarr; <code>Research Question</code> &rarr; <code>Pre-Decision Data Contract</code> &rarr; <code>Client-Holdout ML Model</code> &rarr; <code>Ranked Content Action Queue</code>.
       </p>
     </section>
 
