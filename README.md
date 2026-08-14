@@ -6,7 +6,7 @@
 [![DuckDB](https://img.shields.io/badge/DuckDB-In--Process%20SQL-FFF000?style=for-the-badge&logo=duckdb&logoColor=black)](https://duckdb.org/)
 [![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-Machine%20Learning-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
 
-**Author:** Talha ([@sultanofficial717](https://github.com/sultanofficial717))  
+**Author:** Talha Rehman ([@sultanofficial717](https://github.com/sultanofficial717))  
 **Role:** Applied Machine Learning Intern, Search Intelligence Track  
 **Program:** FlyRank Applied ML Internship (2026)  
 **Live Published Research Paper:** [https://sultanofficial717.github.io/flyrank-ml-internship-talha/](https://sultanofficial717.github.io/flyrank-ml-internship-talha/)  
@@ -137,5 +137,5 @@ I structured the operational queue into six evidence-backed content archetypes:
 
 - **Data Source:** Built on the [FlyRank ML Internship Dataset](https://flyrank.ai).
 - **Research Reference:** *The State of AI-Driven SEO in Numbers* (FlyRank Research, March 2026).
-- **Author:** Talha ([@sultanofficial717](https://github.com/sultanofficial717))  
+- **Author:** Talha Rehman ([@sultanofficial717](https://github.com/sultanofficial717))  
 - **License:** Open-sourced under the MIT License.
